@@ -8,6 +8,7 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class GnuplotFileGenerator {
 
@@ -24,7 +25,10 @@ public class GnuplotFileGenerator {
                 bw.write(" \"");
                 bw.write(stat);
                 bw.write("\"\n");
-                for (Map.Entry<Number, Number> xy : e.getValue().entrySet()) {
+                Map<Number, Number> statYbyX = e.getValue();
+                TreeMap<Number, Number> sortedYbyX = new TreeMap<>((n1, n2) -> (int) (10000 * (n1.doubleValue() - n2.doubleValue())));
+                sortedYbyX.putAll(statYbyX);
+                for (Map.Entry<Number, Number> xy : sortedYbyX.entrySet()) {
                     bw.write(String.valueOf(xy.getKey()));
                     bw.write(" ");
                     bw.write(String.valueOf(xy.getValue()));
@@ -38,68 +42,37 @@ public class GnuplotFileGenerator {
             throw new RuntimeException(e);
         }
 
-        {
-            long xMaxRange = 1;
-            long yMaxRange = 1;
-            for (Map<Number, Number> xy : stat_datasets.values()) {
-                for (Number x : xy.keySet()) {
-                    if (x.longValue() > xMaxRange) {
-                        xMaxRange = x.longValue();
-                    }
-                }
-                for (Number y : xy.values()) {
-                    if (y.longValue() > yMaxRange) {
-                        yMaxRange = y.longValue();
-                    }
-                }
-            }
-            long xMinRange = xMaxRange;
-            long yMinRange = yMaxRange;
-            for (Map<Number, Number> xy : stat_datasets.values()) {
-                for (Number x : xy.keySet()) {
-                    if (x.longValue() < xMinRange) {
-                        xMinRange = x.longValue();
-                    }
-                }
-                for (Number y : xy.values()) {
-                    if (y.longValue() < yMinRange) {
-                        yMinRange = y.longValue();
-                    }
-                }
-            }
-
-            try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(gnuplotScriptFile), StandardCharsets.ISO_8859_1))) {
-                bw.write("set terminal png size 1920,1080 font 'Verdana,20'\n");
-                bw.write("set output 'graph.png'\n");
-                bw.write("set xrange [0:*]\n");
-                bw.write("set yrange [0:*]\n");
-                bw.write("set xtics rotate\n");
-                bw.write("set ytics nomirror\n");
-                bw.write("set tics out scale 1.5,0.5 font \",16\" nomirror\n");
-                bw.write("set mxtics\n");
-                bw.write("set mytics\n");
-                bw.write("set grid ytics\n");
-                bw.write("set style line 1 lc rgb '#0060ad' lt 1 lw 1 pt 7 pi 0 ps 1\n");
-                bw.write("set style line 2 lc rgb '#dd181f' lt 1 lw 1 pt 7 pi 0 ps 1\n");
-                bw.write("set lmargin 12 # align x-axes at the left side across plots\n");
-                bw.write("set bmargin 5 # ensure plots have same height\n");
-                bw.write("set multiplot layout 2,1\n");
-                bw.write("set format x \"\"\n");
-                bw.write("set style data boxes\n");
-                bw.write("set key box opaque inside bottom right\n");
-                bw.write("set ylabel \"messages / second\"\n");
-                bw.write("plot '" + dataFile.getName() + "' \\\n");
-                writePlotLine(bw, 0, Statistics.STAT_MSG_SEC, String.valueOf(indexByStatistic.get(Statistics.STAT_MSG_SEC)), 1, "linespoints ls 1");
-                bw.write("set ylabel \"milliseconds\"\n");
-                bw.write("set xlabel \"" + xlabel + "\"\n");
-                bw.write("unset format x\n");
-                bw.write("plot '" + dataFile.getName() + "' \\\n");
-                writePlotLine(bw, 0, "r-" + Statistics.STAT_MEAN, String.valueOf(indexByStatistic.get("r-" + Statistics.STAT_MEAN)), 2, "linespoints ls 1");
-                writePlotLine(bw, 1, "w-" + Statistics.STAT_MEAN, String.valueOf(indexByStatistic.get("w-" + Statistics.STAT_MEAN)), 2, "linespoints ls 2");
-                bw.write("unset multiplot\n");
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(gnuplotScriptFile), StandardCharsets.ISO_8859_1))) {
+            bw.write("set terminal png size 1920,1080 font 'Verdana,20'\n");
+            bw.write("set output 'graph.png'\n");
+            bw.write("set xrange [0:*]\n");
+            bw.write("set yrange [0:*]\n");
+            bw.write("set xtics rotate\n");
+            bw.write("set ytics nomirror\n");
+            bw.write("set tics out scale 1.5,0.5 font \",16\" nomirror\n");
+            bw.write("set mxtics\n");
+            bw.write("set mytics\n");
+            bw.write("set grid ytics\n");
+            bw.write("set style line 1 lc rgb '#0060ad' lt 1 lw 1 pt 7 pi 0 ps 1\n");
+            bw.write("set style line 2 lc rgb '#dd181f' lt 1 lw 1 pt 7 pi 0 ps 1\n");
+            bw.write("set lmargin 12 # align x-axes at the left side across plots\n");
+            bw.write("set bmargin 5 # ensure plots have same height\n");
+            bw.write("set multiplot layout 2,1\n");
+            bw.write("set format x \"\"\n");
+            bw.write("set style data boxes\n");
+            bw.write("set key box opaque inside bottom right\n");
+            bw.write("set ylabel \"messages / second\"\n");
+            bw.write("plot '" + dataFile.getName() + "' \\\n");
+            writePlotLine(bw, 0, Statistics.STAT_MSG_SEC, String.valueOf(indexByStatistic.get(Statistics.STAT_MSG_SEC)), 1, "linespoints ls 1");
+            bw.write("set ylabel \"milliseconds\"\n");
+            bw.write("set xlabel \"" + xlabel + "\"\n");
+            bw.write("unset format x\n");
+            bw.write("plot '" + dataFile.getName() + "' \\\n");
+            writePlotLine(bw, 0, "r-" + Statistics.STAT_MEAN, String.valueOf(indexByStatistic.get("r-" + Statistics.STAT_MEAN)), 2, "linespoints ls 1");
+            writePlotLine(bw, 1, "w-" + Statistics.STAT_MEAN, String.valueOf(indexByStatistic.get("w-" + Statistics.STAT_MEAN)), 2, "linespoints ls 2");
+            bw.write("unset multiplot\n");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
