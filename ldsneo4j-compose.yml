@@ -1,0 +1,38 @@
+version: '3.3'
+
+services:
+
+  lds:
+    image: statisticsnorway/lds-neo4j:latest
+    ports:
+    - "9090:9090"
+    volumes:
+    - ldsneo4jconf:/conf:ro
+    - ldsneo4jschemas:/schemas:ro
+    depends_on:
+    - db-neo4j
+
+  db-neo4j:
+    image: neo4j:3.4
+    ports:
+    - "7474:7474"
+    - "7687:7687"
+    volumes:
+    - ldsneo4jdb:/data
+    environment:
+    - NEO4J_AUTH
+
+volumes:
+  ldsneo4jdb:
+  ldsneo4jconf:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${CONF_FOLDER}
+      o: bind
+  ldsneo4jschemas:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${SCHEMA_FOLDER}
+      o: bind

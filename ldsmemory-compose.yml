@@ -1,0 +1,25 @@
+version: '3.3'
+
+services:
+
+  lds:
+    image: statisticsnorway/lds-memory:latest
+    ports:
+    - "9090:9090"
+    volumes:
+    - ldsmemoryconf:/conf:ro
+    - ldsmemoryschemas:/schemas:ro
+
+volumes:
+  ldsmemoryconf:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${CONF_FOLDER}
+      o: bind
+  ldsmemoryschemas:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${SCHEMA_FOLDER}
+      o: bind

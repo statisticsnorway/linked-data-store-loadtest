@@ -6,7 +6,7 @@
 #
 
 check_whether_lds_network_and_containers_exists() {
-  LDS_NETWORK=$(docker network list | grep linkeddatastoredocker | awk '{print $2; exit}')
+  LDS_NETWORK=$(docker network list | grep linkeddatastore | awk '{print $2; exit}')
   if [ "${LDS_NETWORK}" = "" ]; then
     echo "ERROR: LDS docker network network does not exists, it should have a name that starts with: linkeddatastoredocker"
     exit 1
@@ -24,17 +24,7 @@ check_whether_lds_network_and_containers_exists() {
   fi
 }
 
-docker_build_ldstestctrl() {
-  echo Building container image: ldstestctrl
-  docker build -t ldstestctrl .
-}
-
-start_test_containers() {
-  echo Creating test results folder on host in current-working-dirctory
-  mkdir -p results
-  echo Removing any previous test-output
-  rm -f results/*
-
+stop_test_containers() {
   if [ "$(docker ps -q -f 'name=ldsloadtestcontroller')" != "" ]; then
     echo Stopping test-controller container
     docker stop $(docker ps -q -f 'name=ldsloadtestcontroller')
@@ -43,9 +33,6 @@ start_test_containers() {
     echo Removing stopped test-controller container
     docker rm $(docker ps -aq -f 'name=ldsloadtestcontroller')
   fi
-  echo Starting test-controller container
-  docker run --network $(docker network list | grep linkeddatastoredocker | awk '{print $2; exit}') -t -d -v $(pwd)/setup:/loadtest -v $(pwd)/results:/results -w /loadtest --name ldsloadtestcontroller ldstestctrl sh
-
 
   if [ "$(docker ps -q -f 'ancestor=cantara/httploadtest-baseline' -f 'name=loadtest')" != "" ]; then
     echo Stopping httploadtest-baseline container
@@ -55,8 +42,13 @@ start_test_containers() {
     echo Removing exited httploadtest-baseline container
     docker rm $(docker ps -aq -f 'ancestor=cantara/httploadtest-baseline' -f 'name=loadtest')
   fi
+}
+
+start_test_containers() {
+  echo Starting test-controller container
+  docker run --network $(docker network list | grep linkeddatastore | awk '{print $2; exit}') -t -d -v $(pwd)/setup:/loadtest -v $(pwd)/${OUTPUTFOLDER}/results:/results -w /loadtest --name ldsloadtestcontroller ldstestctrl sh
   echo Starting httploadtest-baseline container
-  docker run --network $(docker network list | grep linkeddatastoredocker | awk '{print $2; exit}') --name 'loadtest' -d -p 28086:8086 -v $(pwd)/results:/home/HTTPLoadTest-baseline/results cantara/httploadtest-baseline
+  docker run --network $(docker network list | grep linkeddatastore | awk '{print $2; exit}') --name 'loadtest' -d -p 28086:8086 -v $(pwd)/${OUTPUTFOLDER}/results:/home/HTTPLoadTest-baseline/results cantara/httploadtest-baseline
 }
 
 check_health_of_lds() {
@@ -99,14 +91,15 @@ run_loadtest() {
   fi
   echo "Running test with $1 threads for $2 seconds"
   sleep $2
-  sleep 1
+  sleep 2
 }
 
 warm_up_lds() {
   echo "Warming up . . ."
   run_loadtest 10 60
-  mkdir -p results/warmup
-  mv results/*.csv results/*.json results/warmup
+  sleep 3
+  mkdir -p ${OUTPUTFOLDER}/results/warmup
+  mv ${OUTPUTFOLDER}/results/*.csv ${OUTPUTFOLDER}/results/*.json ${OUTPUTFOLDER}/results/warmup
 }
 
 run_loadtest_all() {
@@ -115,6 +108,7 @@ run_loadtest_all() {
   for ((i=12;i<=20;i=i+2)) do run_loadtest $i 10; done
   for ((i=30;i<=90;i=i+10)) do run_loadtest $i 10; done
   for ((i=100;i<=200;i=i+50)) do run_loadtest $i 10; done
+  sleep 3
 }
 
 create_gnuplot_files() {
@@ -130,8 +124,11 @@ create_gnuplot_files() {
 ## Program execution starts here ##
 ###################################
 
+OUTPUTFOLDER="$1"
+echo Output-folder: ${OUTPUTFOLDER}
+
 check_whether_lds_network_and_containers_exists
-docker_build_ldstestctrl
+stop_test_containers
 start_test_containers
 check_health_of_lds
 prepopulate_data
@@ -140,3 +137,4 @@ configure_loadtest
 warm_up_lds
 run_loadtest_all
 create_gnuplot_files
+stop_test_containers

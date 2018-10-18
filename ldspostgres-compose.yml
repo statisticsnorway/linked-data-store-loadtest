@@ -1,0 +1,45 @@
+version: '3.3'
+
+services:
+
+  lds:
+    image: statisticsnorway/lds-postgres:latest
+    ports:
+    - "9090:9090"
+    volumes:
+    - ldspostgresconf:/conf:ro
+    - ldspostgresschemas:/schemas:ro
+    depends_on:
+    - postgresdb
+
+  postgresdb:
+    build:
+      context: .
+      dockerfile: Dockerfile-Postgres
+    image: db-postgres
+    ports:
+    - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: postgres
+    volumes:
+    - ldspostgresdb:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    ports:
+    - 8080:8080
+
+volumes:
+  ldspostgresdb:
+  ldspostgresconf:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${CONF_FOLDER}
+      o: bind
+  ldspostgresschemas:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${SCHEMA_FOLDER}
+      o: bind
