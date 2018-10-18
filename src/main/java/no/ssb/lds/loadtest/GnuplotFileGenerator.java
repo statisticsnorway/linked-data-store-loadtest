@@ -12,7 +12,7 @@ import java.util.TreeMap;
 
 public class GnuplotFileGenerator {
 
-    public static void writeStatisticsGnuplotAndDatafile(Statistics statistics, String xlabel, File gnuplotScriptFile, File dataFile) {
+    public static void writeStatisticsGnuplotAndDatafile(Statistics statistics, String xlabel, File gnuplotScriptFile, File dataFile, String imageFileBasename) {
         Map<String, Map<Number, Number>> stat_datasets = statistics.stat_datasets;
         Map<String, Integer> indexByStatistic = new LinkedHashMap<>();
         try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dataFile), StandardCharsets.ISO_8859_1))) {
@@ -43,8 +43,8 @@ public class GnuplotFileGenerator {
         }
 
         try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(gnuplotScriptFile), StandardCharsets.ISO_8859_1))) {
-            bw.write("set terminal png size 1920,1080 font 'Verdana,20'\n");
-            bw.write("set output 'graph.png'\n");
+            bw.write("set terminal svg size 1920,1080 font 'Verdana,20'\n");
+            bw.write("set output '" + imageFileBasename + ".svg'\n");
             bw.write("set xrange [0:*]\n");
             bw.write("set yrange [0:*]\n");
             bw.write("set xtics rotate\n");
@@ -53,8 +53,8 @@ public class GnuplotFileGenerator {
             bw.write("set mxtics\n");
             bw.write("set mytics\n");
             bw.write("set grid ytics\n");
-            bw.write("set style line 1 lc rgb '#0060ad' lt 1 lw 1 pt 7 pi 0 ps 1\n");
-            bw.write("set style line 2 lc rgb '#dd181f' lt 1 lw 1 pt 7 pi 0 ps 1\n");
+            bw.write("set style line 1 lc rgb '#0060ad' lt 1 lw 1 pt 7 pi 0 ps 0.5\n");
+            bw.write("set style line 2 lc rgb '#dd181f' lt 1 lw 1 pt 7 pi 0 ps 0.5\n");
             bw.write("set lmargin 12 # align x-axes at the left side across plots\n");
             bw.write("set bmargin 5 # ensure plots have same height\n");
             bw.write("set multiplot layout 2,1\n");

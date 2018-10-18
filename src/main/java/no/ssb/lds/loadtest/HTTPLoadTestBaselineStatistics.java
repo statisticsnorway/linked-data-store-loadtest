@@ -109,7 +109,8 @@ public class HTTPLoadTestBaselineStatistics {
 
         GnuplotFileGenerator.writeStatisticsGnuplotAndDatafile(statistics, "clients",
                 plotfilesFolder.resolve(outBasename + ".gnu").toFile(),
-                plotfilesFolder.resolve(outBasename + ".dat").toFile()
+                plotfilesFolder.resolve(outBasename + ".dat").toFile(),
+                outBasename
         );
     }
 }
