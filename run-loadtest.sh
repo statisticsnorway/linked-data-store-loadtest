@@ -120,7 +120,7 @@ run_loadtest_all() {
 create_gnuplot_files() {
   echo "Generating gnuplot files"
   docker exec -it ldsloadtestcontroller java -cp "/opt/plotgen/*:/opt/plotgen/lib/*" no.ssb.lds.loadtest.HTTPLoadTestBaselineStatistics /results /results performance_by_threads
-  echo "Generating png file using gnuplot"
+  echo "Generating svg file using gnuplot"
   docker exec -it -w /results ldsloadtestcontroller gnuplot performance_by_threads.gnu
 }
 
