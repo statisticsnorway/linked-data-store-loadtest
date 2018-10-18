@@ -1,0 +1,43 @@
+{
+  "id": "#mrid",
+  "name": [
+    {
+      "languageCode": "nb",
+      "languageText": "EIER"
+    },
+    {
+      "languageCode": "en",
+      "languageText": "OWNER"
+    }
+  ],
+  "description": [
+    {
+      "languageCode": "nb",
+      "languageText": "Eier"
+    },
+    {
+      "languageCode": "en",
+      "languageText": "Owner"
+    }
+  ],
+  "administrativeStatus": "OPEN",
+  "version": "1.0.0",
+  "versionValidFrom": "#now",
+  "validFrom": "#now",
+  "createdDate": "#now",
+  "createdBy": "OBV",
+  "administrativeDetails": [
+    {
+      "administrativeDetailType": "DEFAULTLANGUAGE",
+      "values": ["nb"]
+    },
+    {
+      "administrativeDetailType": "DOCUMENTATION",
+      "values": [
+        "www.ssb.no/document1",
+        "www.ssb.no/document2",
+        "www.ssb.no/document3"
+      ]
+    }
+  ]
+}

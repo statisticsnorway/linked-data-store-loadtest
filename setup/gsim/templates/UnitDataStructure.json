@@ -1,0 +1,33 @@
+{
+  "id": "#mrid",
+  "name": [
+    {
+      "languageCode": "nb",
+      "languageText": "Bruttodriftsutgifter estimert"
+    }
+  ],
+  "description": [
+    {
+      "languageCode": "nb",
+      "languageText": "Bruttodriftsutgifter for grunnskole etter estimerting."
+    }
+  ],
+  "administrativeStatus": "OPEN",
+  "version": "1.0.0",
+  "versionValidFrom": "#now",
+  "validFrom": "#now",
+  "createdDate": "#now",
+  "createdBy": "OBV",
+  "identifierComponents": [
+    "/IdentifierComponent/2af2368c-3ab1-44df-860e-bd60d30f8f96",
+    "/IdentifierComponent/1e91eb73-da0c-4ee5-8fdd-81a948048e44"
+  ],
+  "measureComponents": [
+    "/MeasureComponent/2499638d-5f58-463c-8310-772fbd3d78ad"
+  ],
+  "attributeComponents": [
+    "/AttributeComponent/0716427a-add2-4327-bfb0-e91659bb6f9a"
+  ],
+  "temporalityType": "STATUS"
+
+}

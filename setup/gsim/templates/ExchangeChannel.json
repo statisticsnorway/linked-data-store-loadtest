@@ -1,0 +1,24 @@
+{
+  "id": "#mrid",
+  "name": [
+    {
+      "languageCode": "nb",
+      "languageText": "NIS/NOR"
+    }
+  ],
+  "description": [
+    {
+      "languageCode": "nb",
+      "languageText": "Skipsregistere - Sjøfartsdirektoratet"
+    }
+  ],
+  "administrativeStatus": "OPEN",
+  "version": "1.0.0",
+  "versionValidFrom": "#now",
+  "validFrom": "#now",
+  "createdDate": "#now",
+  "createdBy": "OHV"
+  ,
+  "exchangeType": "COLLECT",
+  "protocol": "/Protocol/4eea64e6-5c87-462d-9fc5-c3fdd3a310fb"
+}

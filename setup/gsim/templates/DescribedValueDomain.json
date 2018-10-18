@@ -1,0 +1,30 @@
+{
+    "id": "#mrid",
+    "name": [
+      {
+        "languageCode": "nb",
+        "languageText": "Positive heltall i hele tusen, max 1000 000 kr, må fylles ut"
+      }
+    ],
+    "description": [
+      {
+        "languageCode": "nb",
+        "languageText": "Heltall, Min 0 - Max 1000, 000 kr, Tom ikke tillatt"
+      }
+    ],
+    "administrativeStatus": "OPEN",
+    "version": "1.0.0",
+    "versionValidFrom": "#now",
+    "validFrom": "#now",
+    "createdDate": "#now",
+    "createdBy": "OHV",
+    "dataType":"HELTALL",
+    "unitOfMeasure": "000 kr",
+    "minValue": 0,
+    "maxValue": 1000,
+    "minLength": 0,
+    "maxLength": 4,
+    "minDecimals": 0,
+    "maxDecimals": 0,
+    "optional": true
+}

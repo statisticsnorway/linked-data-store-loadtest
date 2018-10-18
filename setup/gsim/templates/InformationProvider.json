@@ -1,0 +1,24 @@
+{
+  "id": "#mrid",
+  "name": [
+    {
+      "languageCode": "nb",
+      "languageText": "SDIR"
+    }
+  ],
+  "description": [
+    {
+      "languageCode": "nb",
+      "languageText": "Sjøfartsdirektoratet"
+    }
+  ],
+  "administrativeStatus": "OPEN",
+  "version": "1.0.0",
+  "versionValidFrom": "#now",
+  "validFrom": "#now",
+  "createdDate": "#now",
+  "createdBy":  "OBV",
+  "agentInRoles": [
+    "/AgentInRole/d1f8e3b7-0eb3-4a6d-91bb-a7451649f2f6"
+  ]
+}

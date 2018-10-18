@@ -1,0 +1,21 @@
+{
+    "id": "#mrid",
+    "name": [
+      {
+        "languageCode": "nb",
+        "languageText": "Aksjonær"
+      }
+    ],
+    "description": [
+      {
+        "languageCode": "nb",
+        "languageText": "Aksjonær er en person eller sammenslutning som eier aksjer i et aksjeselskap eller allmennaksjeselskap"
+      }
+    ],
+    "administrativeStatus": "OPEN",
+    "version": "1.0.0",
+    "versionValidFrom": "#now",
+    "validFrom": "#now",
+    "createdDate": "#now",
+    "createdBy": "OHV"
+}

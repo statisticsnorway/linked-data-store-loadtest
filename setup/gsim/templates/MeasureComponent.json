@@ -1,0 +1,23 @@
+{
+  "id": "#mrid",
+  "name": [
+    {
+      "languageCode": "nb",
+      "languageText": "Beløp"
+    }
+  ],
+  "description": [
+    {
+      "languageCode": "nb",
+      "languageText": "Beløp"
+    }
+  ],
+  "administrativeStatus": "OPEN",
+  "version": "1.0.0",
+  "versionValidFrom": "#now",
+  "validFrom": "#now",
+  "createdDate": "#now",
+  "createdBy": "OBV",
+  "representedVariable": "/RepresentedVariable/18befdcf-60e8-4e6d-941b-1ad5b50857c2"
+
+}

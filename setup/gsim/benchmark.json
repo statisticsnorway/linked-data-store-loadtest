@@ -1,0 +1,8 @@
+{
+  "benchmark_id": "InMemory-Baseline",
+  "benchmark_req_sucessrate_percent": 100,
+  "benchmark_req_mean_read_duration_ms": 50,
+  "benchmark_req_mean_write_duration_ms": 100,
+  "benchmark_req_90percentile_read_duration_ms": 100,
+  "benchmark_req_90percentile_write_duration_ms": 200
+}

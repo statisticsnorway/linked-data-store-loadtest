@@ -1,0 +1,22 @@
+{
+    "id": "#mrid",
+    "name": [
+      {
+        "languageCode": "nb",
+        "languageText": "Personinntekt"
+      }
+    ],
+    "description": [
+      {
+        "languageCode": "nb",
+        "languageText": "Inntekt for person"
+      }
+    ],
+    "administrativeStatus": "OPEN",
+    "version": "1.0.0",
+    "versionValidFrom": "#now",
+    "validFrom": "#now",
+    "createdDate": "#now",
+    "createdBy": "OHV",
+    "unitType": "/UnitType/0209fcb5-306c-482d-835f-d972ca0098b6"
+}

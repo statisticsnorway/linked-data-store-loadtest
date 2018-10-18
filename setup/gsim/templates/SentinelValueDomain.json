@@ -1,0 +1,24 @@
+{
+    "id": "#mrid",
+    "name": [
+      {
+        "languageCode": "nb",
+        "languageText": "Missing Value"
+      }
+    ],
+    "description": [
+      {
+        "languageCode": "nb",
+        "languageText": "Manglende verdi"
+      }
+    ],
+    "administrativeStatus": "OPEN",
+    "version": "1.0.0",
+    "versionValidFrom": "#now",
+    "validFrom": "#now",
+    "createdDate": "#now",
+    "createdBy": "OHV",
+    "dataType": "TEKST",
+    "valueDomain": "/DescribedValueDomain/7c2c5846-0727-4a5d-8d07-c832bb14f9e2"
+
+}

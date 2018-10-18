@@ -1,0 +1,11 @@
+{
+  "test_id": "linked-data-store",
+  "test_name": "linked-data-store",
+  "test_no_of_threads": 1,
+  "test_read_write_ratio": 80,
+  "test_sleep_in_ms": 0,
+  "test_randomize_sleeptime": false,
+  "test_duration_in_seconds": 10,
+  "test_global_variables_map": {
+  }
+}

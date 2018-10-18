@@ -1,0 +1,28 @@
+{
+  "id": "#mrid",
+  "name": [
+    {
+      "languageCode": "nb",
+      "languageText": "Periode"
+    }
+  ],
+  "description": [
+    {
+      "languageCode": "nb",
+      "languageText": "Perioden dataene gjelder for"
+    }
+  ],
+  "administrativeStatus": "OPEN",
+  "version": "1.0.0",
+  "versionValidFrom": "#now",
+  "validFrom": "#now",
+  "createdDate": "#now",
+  "createdBy": "OBV",
+
+  "isUnique": false,
+  "isComposite": true,
+  "role": "TIME",
+  "format": "dd.mm.yyyy hh24:mi:ss",
+  "representedVariable": "/RepresentedVariable/18befdcf-60e8-4e6d-941b-1ad5b50857c2"
+
+}

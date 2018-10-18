@@ -1,0 +1,26 @@
+{
+    "id": "#mrid",
+    "name": [
+      {
+        "languageCode": "nb",
+        "languageText": "Person over 15 år"
+      }
+    ],
+    "description": [
+      {
+        "languageCode": "nb",
+        "languageText": "Person i Norge over 15 år i 2017-18"
+      }
+    ],
+    "administrativeStatus": "OPEN",
+    "version": "1.0.0",
+    "versionValidFrom": "#now",
+    "validFrom": "#now",
+    "createdDate": "#now",
+    "createdBy": "OHV",
+    "populationType": "UNDERSØKELSESPOPULASJON",
+    "referencePeriod": "2017-2018",
+    "geography": "Norge",
+    "unitType": "/UnitType/4092aa6e-822f-4bb4-8254-79a3358ec107",
+    "respondantUnitType":"/UnitType/4092aa6e-822f-4bb4-8254-79a3358ec107"
+}

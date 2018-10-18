@@ -1,0 +1,22 @@
+{
+    "id": "#mrid",
+    "agentType": "ORGANIZATION",
+    "name": [
+      {
+        "languageCode": "nb",
+        "languageText": "Avdeling 300"
+      }
+    ],
+    "description": [
+      {
+        "languageCode": "nb",
+        "languageText": "Avdeling for person- og sosialstatistikk"
+      }
+    ],
+    "administrativeStatus": "OPEN",
+    "version": "1.0.0",
+    "versionValidFrom": "#now",
+    "validFrom": "#now",
+    "createdDate": "#now",
+    "createdBy": "BNJ"
+}

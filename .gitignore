@@ -12,4 +12,5 @@ buildNumber.properties
 !/.mvn/wrapper/maven-wrapper.jar
 
 *.iml
-loadtest_target/
+results/
+setup/*.zip

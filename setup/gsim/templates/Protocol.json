@@ -1,0 +1,27 @@
+{
+  "id": "#mrid",
+  "name": [
+    {
+      "languageCode": "nb",
+      "languageText": "Pull API"
+    }
+  ],
+  "description": [
+    {
+      "languageCode": "nb",
+      "languageText": "Hent API"
+    },
+    {
+      "languageCode": "en",
+      "languageText": "Pull API"
+    }
+  ],
+  "administrativeStatus": "OPEN",
+  "version": "1.0.0",
+  "versionValidFrom": "#now",
+  "validFrom": "#now",
+  "createdDate": "#now",
+  "createdBy": "OHV"
+  ,
+  "protocolType": "API"
+}

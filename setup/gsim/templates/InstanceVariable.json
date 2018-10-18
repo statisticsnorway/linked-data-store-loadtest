@@ -1,0 +1,24 @@
+{
+    "id": "#mrid",
+    "name": [
+      {
+        "languageCode": "nb",
+        "languageText": "Personinntekt"
+      }
+    ],
+    "description": [
+      {
+        "languageCode": "nb",
+        "languageText": "Inntekt for person"
+      }
+    ],
+    "administrativeStatus": "OPEN",
+    "version": "1.0.0",
+    "versionValidFrom": "#now",
+    "validFrom": "#now",
+    "createdDate": "#now",
+    "createdBy": "OHV",
+    "representedVariable": "/RepresentedVariable/18befdcf-60e8-4e6d-941b-1ad5b50857c2",
+    "population": "/Population/73579056-8da8-4f6a-af7e-464ace25326c",
+    "sentinelValueDomain": "/SentinelValueDomain/3dceb015-2455-4fa4-b62c-d01b7bd8ba02"
+}
