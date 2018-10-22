@@ -1,21 +1,21 @@
 package no.ssb.lds.loadtest;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
 public class GnuplotFileGenerator {
 
-    public static void writeStatisticsGnuplotAndDatafile(Statistics statistics, String xlabel, File gnuplotScriptFile, File dataFile, String imageFileBasename) {
+    public static void writeStatisticsGnuplotAndDatafile(Statistics statistics, String xlabel, Path plotfilesFolder, String plotfilesBasename) {
         Map<String, Map<Number, Number>> stat_datasets = statistics.stat_datasets;
         Map<String, Integer> indexByStatistic = new LinkedHashMap<>();
-        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dataFile), StandardCharsets.ISO_8859_1))) {
+        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(plotfilesFolder.resolve(plotfilesBasename + ".dat").toFile()), StandardCharsets.ISO_8859_1))) {
             int i = 0;
             for (Map.Entry<String, Map<Number, Number>> e : stat_datasets.entrySet()) {
                 String stat = e.getKey();
@@ -42,9 +42,9 @@ public class GnuplotFileGenerator {
             throw new RuntimeException(e);
         }
 
-        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(gnuplotScriptFile), StandardCharsets.ISO_8859_1))) {
+        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(plotfilesFolder.resolve(plotfilesBasename + ".gnu").toFile()), StandardCharsets.ISO_8859_1))) {
             bw.write("set terminal svg size 1920,1080 font 'Verdana,20'\n");
-            bw.write("set output '" + imageFileBasename + ".svg'\n");
+            bw.write("set output '" + plotfilesBasename + ".svg'\n");
             bw.write("set xrange [0:*]\n");
             bw.write("set yrange [0:*]\n");
             bw.write("set xtics rotate\n");
@@ -62,15 +62,106 @@ public class GnuplotFileGenerator {
             bw.write("set style data boxes\n");
             bw.write("set key box opaque inside bottom right\n");
             bw.write("set ylabel \"messages / second\"\n");
-            bw.write("plot '" + dataFile.getName() + "' \\\n");
+            bw.write("plot '" + plotfilesBasename + ".dat' \\\n");
             writePlotLine(bw, 0, Statistics.STAT_MSG_SEC, String.valueOf(indexByStatistic.get(Statistics.STAT_MSG_SEC)), 1, "linespoints ls 1");
             bw.write("set ylabel \"milliseconds\"\n");
             bw.write("set xlabel \"" + xlabel + "\"\n");
             bw.write("unset format x\n");
-            bw.write("plot '" + dataFile.getName() + "' \\\n");
+            bw.write("plot '" + plotfilesBasename + ".dat' \\\n");
             writePlotLine(bw, 0, "r-" + Statistics.STAT_MEAN, String.valueOf(indexByStatistic.get("r-" + Statistics.STAT_MEAN)), 2, "linespoints ls 1");
             writePlotLine(bw, 1, "w-" + Statistics.STAT_MEAN, String.valueOf(indexByStatistic.get("w-" + Statistics.STAT_MEAN)), 2, "linespoints ls 2");
             bw.write("unset multiplot\n");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(plotfilesFolder.resolve(plotfilesBasename + "_total_throughput.gnu").toFile()), StandardCharsets.ISO_8859_1))) {
+            bw.write("set terminal svg size 1920,1080 font 'Verdana,20'\n");
+            bw.write("set output '" + plotfilesBasename + "_total_throughput.svg'\n");
+            bw.write("set xrange [0:*]\n");
+            bw.write("set yrange [0:*]\n");
+            bw.write("set xtics rotate\n");
+            bw.write("set ytics nomirror\n");
+            bw.write("set tics out scale 1.5,0.5 font \",16\" nomirror\n");
+            bw.write("set mxtics\n");
+            bw.write("set mytics\n");
+            bw.write("set grid ytics\n");
+            bw.write("set style line 1 lc rgb '#0060ad' lt 1 lw 1 pt 7 pi 0 ps 0.5\n");
+            bw.write("set format x \"\"\n");
+            bw.write("set style data boxes\n");
+            bw.write("set key box opaque inside bottom right\n");
+            bw.write("set ylabel \"messages / second\"\n");
+            bw.write("set xlabel \"" + xlabel + "\"\n");
+            bw.write("plot '" + plotfilesBasename + ".dat' \\\n");
+            writePlotLine(bw, 0, Statistics.STAT_MSG_SEC, String.valueOf(indexByStatistic.get(Statistics.STAT_MSG_SEC)), 1, "linespoints ls 1");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(plotfilesFolder.resolve(plotfilesBasename + "_read_latency.gnu").toFile()), StandardCharsets.ISO_8859_1))) {
+            bw.write("set terminal svg size 1920,1080 font 'Verdana,20'\n");
+            bw.write("set output '" + plotfilesBasename + "_read_latency.svg'\n");
+            bw.write("set xrange [0:*]\n");
+            bw.write("set yrange [0:*]\n");
+            bw.write("set xtics rotate\n");
+            bw.write("set ytics nomirror\n");
+            bw.write("set tics out scale 1.5,0.5 font \",16\" nomirror\n");
+            bw.write("set mxtics\n");
+            bw.write("set mytics\n");
+            bw.write("set grid ytics mytics\n");
+            bw.write("set style line 1 lc rgb '#0060ad' lt 1 lw 1 pt 7 pi 0 ps 0.5\n");
+            bw.write("set style line 2 lc rgb '#ffc400' lt 1 lw 1 pt 9 pi 0 ps 0.5\n");
+            bw.write("set style line 3 lc rgb '#00ff92' lt 1 lw 1 pt 11 pi 0 ps 0.5\n");
+            bw.write("set style line 4 lc rgb '#00caff' lt 1 lw 1 pt 13 pi 0 ps 0.5\n");
+            bw.write("set style line 5 lc rgb '#dd181f' lt 1 lw 1 pt 15 pi 0 ps 0.5\n");
+            bw.write("set lmargin 12 # align x-axes at the left side across plots\n");
+            bw.write("set bmargin 5 # ensure plots have same height\n");
+            bw.write("set format x \"\"\n");
+            bw.write("set style data boxes\n");
+            bw.write("set key box opaque inside bottom right\n");
+            bw.write("set logscale y\n");
+            bw.write("set ylabel \"milliseconds\"\n");
+            bw.write("set xlabel \"" + xlabel + "\"\n");
+            bw.write("unset format x\n");
+            bw.write("plot '" + plotfilesBasename + ".dat' \\\n");
+            writePlotLine(bw, 0, "r-" + Statistics.STAT_MEAN, String.valueOf(indexByStatistic.get("r-" + Statistics.STAT_MEAN)), 5, "linespoints ls 1");
+            writePlotLine(bw, 1, "r-" + Statistics.STAT_MEDIAN, String.valueOf(indexByStatistic.get("r-" + Statistics.STAT_MEDIAN)), 5, "linespoints ls 2");
+            writePlotLine(bw, 2, "r-" + Statistics.STAT_P90, String.valueOf(indexByStatistic.get("r-" + Statistics.STAT_P90)), 5, "linespoints ls 3");
+            writePlotLine(bw, 3, "r-" + Statistics.STAT_P95, String.valueOf(indexByStatistic.get("r-" + Statistics.STAT_P95)), 5, "linespoints ls 4");
+            writePlotLine(bw, 4, "r-" + Statistics.STAT_P99, String.valueOf(indexByStatistic.get("r-" + Statistics.STAT_P99)), 5, "linespoints ls 5");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(plotfilesFolder.resolve(plotfilesBasename + "_write_latency.gnu").toFile()), StandardCharsets.ISO_8859_1))) {
+            bw.write("set terminal svg size 1920,1080 font 'Verdana,20'\n");
+            bw.write("set output '" + plotfilesBasename + "_write_latency.svg'\n");
+            bw.write("set xrange [0:*]\n");
+            bw.write("set yrange [0:*]\n");
+            bw.write("set xtics rotate\n");
+            bw.write("set ytics nomirror\n");
+            bw.write("set tics out scale 1.5,0.5 font \",16\" nomirror\n");
+            bw.write("set mxtics\n");
+            bw.write("set mytics\n");
+            bw.write("set grid ytics mytics\n");
+            bw.write("set style line 1 lc rgb '#0060ad' lt 1 lw 1 pt 7 pi 0 ps 0.5\n");
+            bw.write("set style line 2 lc rgb '#ffc400' lt 1 lw 1 pt 9 pi 0 ps 0.5\n");
+            bw.write("set style line 3 lc rgb '#00ff92' lt 1 lw 1 pt 11 pi 0 ps 0.5\n");
+            bw.write("set style line 4 lc rgb '#00caff' lt 1 lw 1 pt 13 pi 0 ps 0.5\n");
+            bw.write("set style line 5 lc rgb '#dd181f' lt 1 lw 1 pt 15 pi 0 ps 0.5\n");
+            bw.write("set lmargin 12 # align x-axes at the left side across plots\n");
+            bw.write("set bmargin 5 # ensure plots have same height\n");
+            bw.write("set format x \"\"\n");
+            bw.write("set style data boxes\n");
+            bw.write("set key box opaque inside bottom right\n");
+            bw.write("set logscale y\n");
+            bw.write("set ylabel \"milliseconds\"\n");
+            bw.write("set xlabel \"" + xlabel + "\"\n");
+            bw.write("unset format x\n");
+            bw.write("plot '" + plotfilesBasename + ".dat' \\\n");
+            writePlotLine(bw, 0, "w-" + Statistics.STAT_MEAN, String.valueOf(indexByStatistic.get("w-" + Statistics.STAT_MEAN)), 5, "linespoints ls 1");
+            writePlotLine(bw, 1, "w-" + Statistics.STAT_MEDIAN, String.valueOf(indexByStatistic.get("w-" + Statistics.STAT_MEDIAN)), 5, "linespoints ls 2");
+            writePlotLine(bw, 2, "w-" + Statistics.STAT_P90, String.valueOf(indexByStatistic.get("w-" + Statistics.STAT_P90)), 5, "linespoints ls 3");
+            writePlotLine(bw, 3, "w-" + Statistics.STAT_P95, String.valueOf(indexByStatistic.get("w-" + Statistics.STAT_P95)), 5, "linespoints ls 4");
+            writePlotLine(bw, 4, "w-" + Statistics.STAT_P99, String.valueOf(indexByStatistic.get("w-" + Statistics.STAT_P99)), 5, "linespoints ls 5");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

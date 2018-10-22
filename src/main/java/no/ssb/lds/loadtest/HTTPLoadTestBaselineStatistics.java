@@ -62,7 +62,7 @@ public class HTTPLoadTestBaselineStatistics {
                 }
                 while (jParser.nextToken() == JsonToken.START_OBJECT) {
                     ObjectNode node = mapper.readTree(jParser);
-                    long duration = node.get("test_duration").asLong();
+                    double duration = node.get("test_duration").asDouble();
                     boolean success = node.get("test_success").asBoolean();
                     if (!success) {
                         failed++;
@@ -107,10 +107,6 @@ public class HTTPLoadTestBaselineStatistics {
             statistics.sample(threads, testDurationSeconds);
         }
 
-        GnuplotFileGenerator.writeStatisticsGnuplotAndDatafile(statistics, "clients",
-                plotfilesFolder.resolve(outBasename + ".gnu").toFile(),
-                plotfilesFolder.resolve(outBasename + ".dat").toFile(),
-                outBasename
-        );
+        GnuplotFileGenerator.writeStatisticsGnuplotAndDatafile(statistics, "clients", plotfilesFolder, outBasename);
     }
 }

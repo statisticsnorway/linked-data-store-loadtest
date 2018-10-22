@@ -106,8 +106,9 @@ run_loadtest_all() {
   echo "Running loadtests with threads ranging from 1 to 200"
   for i in {1..10}; do run_loadtest $i 10; done
   for ((i=12;i<=20;i=i+2)) do run_loadtest $i 10; done
-  for ((i=30;i<=90;i=i+10)) do run_loadtest $i 10; done
-  for ((i=100;i<=200;i=i+50)) do run_loadtest $i 10; done
+  for ((i=25;i<=50;i=i+5)) do run_loadtest $i 10; done
+  for ((i=60;i<=90;i=i+10)) do run_loadtest $i 10; done
+  for ((i=100;i<=200;i=i+25)) do run_loadtest $i 10; done
   sleep 3
 }
 
@@ -116,6 +117,9 @@ create_gnuplot_files() {
   docker exec -it ldsloadtestcontroller java -cp "/opt/plotgen/*:/opt/plotgen/lib/*" no.ssb.lds.loadtest.HTTPLoadTestBaselineStatistics /results /results performance_by_threads
   echo "Generating svg file using gnuplot"
   docker exec -it -w /results ldsloadtestcontroller gnuplot performance_by_threads.gnu
+  docker exec -it -w /results ldsloadtestcontroller gnuplot performance_by_threads_total_throughput.gnu
+  docker exec -it -w /results ldsloadtestcontroller gnuplot performance_by_threads_read_latency.gnu
+  docker exec -it -w /results ldsloadtestcontroller gnuplot performance_by_threads_write_latency.gnu
 }
 
 
