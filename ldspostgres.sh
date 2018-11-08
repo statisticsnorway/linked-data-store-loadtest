@@ -8,12 +8,18 @@ rm -f ldspostgres/results/*
 
 ENV_FILE='ldspostgres-compose.env'
 if [ -f $ENV_FILE ]; then
-    export $(grep -v '^#' $ENV_FILE | envsubst | xargs -0)
+    source $ENV_FILE
 fi
 
 echo "Cleaning existing associated volumes and data"
 docker-compose -f ldspostgres-compose.yml down
-docker volume rm $(docker volume ls -q -f "name=ldspostgres")
+docker volume rm $(docker volume ls -q -f name=ldspostgres)
+
+LDS_NETWORK=$(docker network ls -f name=ldsloadtest -q)
+if [ "$LDS_NETWORK" == "" ]; then
+    echo Create network
+    docker network create ldsloadtest
+fi
 
 echo Starting LDS postgres
 docker-compose -f ldspostgres-compose.yml up -d --force-recreate

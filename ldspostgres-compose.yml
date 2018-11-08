@@ -4,6 +4,8 @@ services:
 
   lds:
     image: statisticsnorway/lds-postgres:latest
+    networks:
+    - ldsloadtest
     ports:
     - "9090:9090"
     volumes:
@@ -17,6 +19,8 @@ services:
       context: .
       dockerfile: Dockerfile-Postgres
     image: db-postgres
+    networks:
+    - ldsloadtest
     ports:
     - 5432:5432
     environment:
@@ -26,6 +30,8 @@ services:
 
   adminer:
     image: adminer
+    networks:
+    - ldsloadtest
     ports:
     - 8080:8080
 
@@ -43,3 +49,8 @@ volumes:
       type: none
       device: ${SCHEMA_FOLDER}
       o: bind
+
+networks:
+  ldsloadtest:
+    external:
+      name: ldsloadtest

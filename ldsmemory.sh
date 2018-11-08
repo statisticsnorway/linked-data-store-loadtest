@@ -8,7 +8,13 @@ rm -rf ldsmemory/results/*
 
 ENV_FILE='ldsmemory-compose.env'
 if [ -f $ENV_FILE ]; then
-    export $(grep -v '^#' $ENV_FILE | envsubst | xargs -0)
+    source $ENV_FILE
+fi
+
+LDS_NETWORK=$(docker network ls -f name=ldsloadtest -q)
+if [ "$LDS_NETWORK" == "" ]; then
+    echo Create network
+    docker network create ldsloadtest
 fi
 
 echo Starting LDS memory

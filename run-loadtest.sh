@@ -6,7 +6,7 @@
 #
 
 check_whether_lds_network_and_containers_exists() {
-  LDS_NETWORK=$(docker network list | grep linkeddatastore | awk '{print $2; exit}')
+  LDS_NETWORK=ldsloadtest
   if [ "${LDS_NETWORK}" = "" ]; then
     echo "ERROR: LDS docker network network does not exists, it should have a name that starts with: linkeddatastoredocker"
     exit 1
@@ -46,9 +46,9 @@ stop_test_containers() {
 
 start_test_containers() {
   echo Starting test-controller container
-  docker run --network $(docker network list | grep linkeddatastore | awk '{print $2; exit}') -t -d -v $(pwd)/setup:/loadtest -v $(pwd)/${OUTPUTFOLDER}/results:/results -w /loadtest --name ldsloadtestcontroller ldstestctrl sh
+  docker run --network ldsloadtest -t -d -v $(pwd)/setup:/loadtest -v $(pwd)/${OUTPUTFOLDER}/results:/results -w /loadtest --name ldsloadtestcontroller ldstestctrl sh
   echo Starting httploadtest-baseline container
-  docker run --network $(docker network list | grep linkeddatastore | awk '{print $2; exit}') --name 'loadtest' -d -p 28086:8086 -v $(pwd)/${OUTPUTFOLDER}/results:/home/HTTPLoadTest-baseline/results cantara/httploadtest-baseline
+  docker run --network ldsloadtest --name 'loadtest' -d -p 28086:8086 -v $(pwd)/${OUTPUTFOLDER}/results:/home/HTTPLoadTest-baseline/results cantara/httploadtest-baseline
 }
 
 check_health_of_lds() {

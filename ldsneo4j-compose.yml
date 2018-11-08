@@ -4,6 +4,8 @@ services:
 
   lds:
     image: statisticsnorway/lds-neo4j:latest
+    networks:
+    - ldsloadtest
     ports:
     - "9090:9090"
     volumes:
@@ -14,6 +16,8 @@ services:
 
   db-neo4j:
     image: neo4j:3.4
+    networks:
+    - ldsloadtest
     ports:
     - "7474:7474"
     - "7687:7687"
@@ -36,3 +40,8 @@ volumes:
       type: none
       device: ${SCHEMA_FOLDER}
       o: bind
+
+networks:
+  ldsloadtest:
+    external:
+      name: ldsloadtest

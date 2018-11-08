@@ -4,6 +4,8 @@ services:
 
   lds:
     image: statisticsnorway/lds-memory:latest
+    networks:
+    - ldsloadtest
     ports:
     - "9090:9090"
     volumes:
@@ -23,3 +25,8 @@ volumes:
       type: none
       device: ${SCHEMA_FOLDER}
       o: bind
+
+networks:
+  ldsloadtest:
+    external:
+      name: ldsloadtest
