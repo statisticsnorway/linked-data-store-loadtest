@@ -8,6 +8,8 @@ services:
     - ldsloadtest
     ports:
     - "9090:9090"
+    environment:
+      - LDS_persistence.fragment.capacity=8192
     volumes:
     - ldsmemoryconf:/conf:ro
     - ldsmemoryschemas:/schemas:ro

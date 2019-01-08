@@ -8,7 +8,7 @@
 check_whether_lds_network_and_containers_exists() {
   LDS_NETWORK=ldsloadtest
   if [ "${LDS_NETWORK}" = "" ]; then
-    echo "ERROR: LDS docker network network does not exists, it should have a name that starts with: linkeddatastoredocker"
+    echo "ERROR: LDS docker network does not exists, it should have a name that starts with: $LDS_NETWORK"
     exit 1
   else
     echo "Using docker network: ${LDS_NETWORK}"
@@ -16,7 +16,7 @@ check_whether_lds_network_and_containers_exists() {
 
   LDS_NETWORK_CONTAINER_IDS=$(docker ps -q -f "network=${LDS_NETWORK}")
   if [ "${LDS_NETWORK_CONTAINER_IDS}" = "" ]; then
-    echo "ERROR: LDS is not running in docker network with name that starts with: linkeddatastoredocker"
+    echo "ERROR: LDS is not running in docker network with name that starts with: $LDS_NETWORK"
     exit 1
   else
     echo Listing relevant LDS and/or loadtest related containers:

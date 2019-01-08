@@ -19,6 +19,7 @@ fi
 
 echo Starting LDS memory
 docker-compose -f ldsmemory-compose.yml up -d --force-recreate
+#sleep 5 && docker logs linked-data-store-loadtest_lds_1
 
 echo Building container image: ldstestctrl
 docker build -t ldstestctrl .
