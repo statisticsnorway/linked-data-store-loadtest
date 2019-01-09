@@ -4,7 +4,7 @@ echo Creating folders
 mkdir -p ldsneo4j/conf
 mkdir -p ldsneo4j/results
 echo Removing previous test-output
-rm -f ldsneo4j/results/*
+rm -rf ldsneo4j/results/*
 
 ENV_FILE='ldsneo4j-compose.env'
 if [ -f $ENV_FILE ]; then

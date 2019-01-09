@@ -16,3 +16,4 @@ setup/*.zip
 ldsmemory/
 ldsneo4j/
 ldspostgres/
+interactive/

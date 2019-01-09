@@ -15,7 +15,7 @@ services:
     - db-neo4j
 
   db-neo4j:
-    image: neo4j:3.4
+    image: neo4j:3.5
     networks:
     - ldsloadtest
     ports:

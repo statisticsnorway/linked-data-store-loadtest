@@ -4,7 +4,7 @@ echo Creating folders
 mkdir -p ldspostgres/conf
 mkdir -p ldspostgres/results
 echo Removing previous test-output
-rm -f ldspostgres/results/*
+rm -rf ldspostgres/results/*
 
 ENV_FILE='ldspostgres-compose.env'
 if [ -f $ENV_FILE ]; then
