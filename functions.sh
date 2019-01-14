@@ -53,7 +53,8 @@ start_ldsloadtestcontroller() {
 
 start_httploadtest() {
   echo Starting httploadtest-baseline container
-  docker run --network ldsloadtest --name 'httploadtestbaseline' -d -p 28086:8086 -v $(pwd)/${OUTPUTFOLDER}/results:/home/HTTPLoadTest-baseline/results cantara/httploadtest-baseline
+  docker pull cantara/httploadtest-baseline:latest
+  docker run --network ldsloadtest --name 'httploadtestbaseline' -d -p 28086:8086 -v $(pwd)/${OUTPUTFOLDER}/results:/home/HTTPLoadTest-baseline/results cantara/httploadtest-baseline:latest
 }
 
 stop_test_containers() {
