@@ -3,6 +3,7 @@
     "command_url": "http://lds:9090/ns/#domain/#mrid",
     "command_contenttype": "application/json",
     "command_http_post": false,
+    "command_use_hystrix": false,
     "command_timeout_milliseconds": 2500,
     "command_template": "",
     "command_replacement_map": {

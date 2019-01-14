@@ -129,11 +129,13 @@ warm_up_lds() {
 }
 
 create_gnuplot_files() {
+  GP_FILE_PREFIX=performance_by_threads
   echo "Generating gnuplot files"
-  docker exec -it ldsloadtestcontroller java -cp "/opt/plotgen/*:/opt/plotgen/lib/*" no.ssb.lds.loadtest.HTTPLoadTestBaselineStatistics /results /results performance_by_threads
+  docker exec -it ldsloadtestcontroller java -cp "/opt/plotgen/*:/opt/plotgen/lib/*" no.ssb.lds.loadtest.HTTPLoadTestBaselineStatistics /results /results $GP_FILE_PREFIX
   echo "Generating svg file using gnuplot"
-  docker exec -it -w /results ldsloadtestcontroller gnuplot performance_by_threads.gnu
-  docker exec -it -w /results ldsloadtestcontroller gnuplot performance_by_threads_total_throughput.gnu
-  docker exec -it -w /results ldsloadtestcontroller gnuplot performance_by_threads_read_latency.gnu
-  docker exec -it -w /results ldsloadtestcontroller gnuplot performance_by_threads_write_latency.gnu
+  docker exec -it -w /results ldsloadtestcontroller gnuplot ${GP_FILE_PREFIX}.gnu
+  docker exec -it -w /results ldsloadtestcontroller gnuplot ${GP_FILE_PREFIX}_load.gnu
+  docker exec -it -w /results ldsloadtestcontroller gnuplot ${GP_FILE_PREFIX}_total_throughput.gnu
+  docker exec -it -w /results ldsloadtestcontroller gnuplot ${GP_FILE_PREFIX}_read_latency.gnu
+  docker exec -it -w /results ldsloadtestcontroller gnuplot ${GP_FILE_PREFIX}_write_latency.gnu
 }

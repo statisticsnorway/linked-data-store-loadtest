@@ -61,10 +61,11 @@ public class GnuplotFileGenerator {
             bw.write("set format x \"\"\n");
             bw.write("set style data boxes\n");
             bw.write("set key box opaque inside bottom right\n");
-            bw.write("set ylabel \"messages / second\"\n");
+            bw.write("set ylabel \"Throughput (requests/second)\"\n");
             bw.write("plot '" + plotfilesBasename + ".dat' \\\n");
-            writePlotLine(bw, 0, Statistics.STAT_MSG_SEC, String.valueOf(indexByStatistic.get(Statistics.STAT_MSG_SEC)), 1, "linespoints ls 1");
-            bw.write("set ylabel \"milliseconds\"\n");
+            writePlotLine(bw, 0, "success", String.valueOf(indexByStatistic.get(Statistics.STAT_N_PER_SEC)), 2, "linespoints ls 1");
+            writePlotLine(bw, 1, "failed", String.valueOf(indexByStatistic.get("f-" + Statistics.STAT_N_PER_SEC)), 2, "linespoints ls 2");
+            bw.write("set ylabel \"Latency (ms)\"\n");
             bw.write("set xlabel \"" + xlabel + "\"\n");
             bw.write("unset format x\n");
             bw.write("plot '" + plotfilesBasename + ".dat' \\\n");
@@ -87,13 +88,16 @@ public class GnuplotFileGenerator {
             bw.write("set mytics\n");
             bw.write("set grid ytics\n");
             bw.write("set style line 1 lc rgb '#0060ad' lt 1 lw 1 pt 7 pi 0 ps 0.5\n");
+            bw.write("set style line 2 lc rgb '#dd181f' lt 1 lw 1 pt 13 pi 0 ps 0.5\n");
             bw.write("set format x \"\"\n");
             bw.write("set style data boxes\n");
             bw.write("set key box opaque inside bottom right\n");
-            bw.write("set ylabel \"messages / second\"\n");
+            bw.write("set ylabel \"Throughput (requests/second)\"\n");
             bw.write("set xlabel \"" + xlabel + "\"\n");
+            bw.write("unset format x\n");
             bw.write("plot '" + plotfilesBasename + ".dat' \\\n");
-            writePlotLine(bw, 0, Statistics.STAT_MSG_SEC, String.valueOf(indexByStatistic.get(Statistics.STAT_MSG_SEC)), 1, "linespoints ls 1");
+            writePlotLine(bw, 0, "success", String.valueOf(indexByStatistic.get(Statistics.STAT_N_PER_SEC)), 2, "linespoints ls 1");
+            writePlotLine(bw, 1, "failed", String.valueOf(indexByStatistic.get("f-" + Statistics.STAT_N_PER_SEC)), 2, "linespoints ls 2");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -119,7 +123,7 @@ public class GnuplotFileGenerator {
             bw.write("set style data boxes\n");
             bw.write("set key box opaque inside bottom right\n");
             bw.write("set logscale y\n");
-            bw.write("set ylabel \"milliseconds\"\n");
+            bw.write("set ylabel \"Latency (ms)\"\n");
             bw.write("set xlabel \"" + xlabel + "\"\n");
             bw.write("unset format x\n");
             bw.write("plot '" + plotfilesBasename + ".dat' \\\n");
@@ -153,7 +157,7 @@ public class GnuplotFileGenerator {
             bw.write("set style data boxes\n");
             bw.write("set key box opaque inside bottom right\n");
             bw.write("set logscale y\n");
-            bw.write("set ylabel \"milliseconds\"\n");
+            bw.write("set ylabel \"Latency (ms)\"\n");
             bw.write("set xlabel \"" + xlabel + "\"\n");
             bw.write("unset format x\n");
             bw.write("plot '" + plotfilesBasename + ".dat' \\\n");
@@ -165,15 +169,51 @@ public class GnuplotFileGenerator {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(plotfilesFolder.resolve(plotfilesBasename + "_load.gnu").toFile()), StandardCharsets.ISO_8859_1))) {
+            bw.write("set terminal svg size 720,720 font 'Verdana,20'\n");
+            bw.write("set output '" + plotfilesBasename + "_load.svg'\n");
+            bw.write("set xrange [0:*]\n");
+            bw.write("set yrange [0:*]\n");
+            bw.write("set xtics rotate\n");
+            bw.write("set ytics nomirror\n");
+            bw.write("set tics out scale 1.5,0.5 font \",16\" nomirror\n");
+            bw.write("set mxtics\n");
+            bw.write("set mytics\n");
+            bw.write("set grid ytics mytics\n");
+            bw.write("set style line 1 lc rgb '#3f704d' lt 1 lw 1\n");
+            bw.write("set style line 2 lc rgb '#0060ad' lt 1 lw 1\n");
+            bw.write("set style line 3 lc rgb '#dd181f' lt 1 lw 1\n");
+            bw.write("set lmargin 12 # align x-axes at the left side across plots\n");
+            bw.write("set bmargin 5 # ensure plots have same height\n");
+            bw.write("set format x \"\"\n");
+            bw.write("set style data boxes\n");
+            bw.write("set key box opaque inside bottom right\n");
+            bw.write("set ylabel \"concurrency-degree\"\n");
+            bw.write("set xlabel \"" + xlabel + "\"\n");
+            bw.write("set size square\n");
+            bw.write("unset format x\n");
+            bw.write("plot '" + plotfilesBasename + ".dat' \\\n");
+            writePlotLine(bw, 0, "u 1:($1)", "ideal", String.valueOf(indexByStatistic.get("wc-" + Statistics.STAT_MEAN)), 3, "lines ls 1");
+            writePlotLine(bw, 1, "worker", String.valueOf(indexByStatistic.get("wc-" + Statistics.STAT_MEAN)), 3, "lines ls 2");
+            writePlotLine(bw, 2, "command", String.valueOf(indexByStatistic.get("cc-" + Statistics.STAT_MEAN)), 3, "lines ls 3");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     static void writePlotLine(BufferedWriter bw, int i, String stat, String datasetIndex, int size, String w) throws IOException {
+        writePlotLine(bw, i, "", stat, datasetIndex, size, w);
+    }
+
+    static void writePlotLine(BufferedWriter bw, int i, String u, String stat, String datasetIndex, int size, String w) throws IOException {
         bw.write("  ");
         if (i > 0) {
             bw.write("'' ");
         }
         bw.write("i ");
         bw.write(datasetIndex);
+        bw.write(" ");
+        bw.write(u);
         bw.write(" t \"");
         bw.write(stat);
         bw.write("\" w ");

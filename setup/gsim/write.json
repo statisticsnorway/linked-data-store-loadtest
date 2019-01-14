@@ -3,6 +3,7 @@
     "command_url": "http://lds:9090/ns/#domain/#mrid?sync=true",
     "command_contenttype": "application/json",
     "command_http_post": true,
+    "command_use_hystrix": false,
     "command_timeout_milliseconds": 5000,
     "command_template": "FILE:gsim/templates/#domain.json",
     "command_replacement_map": {

@@ -48,7 +48,6 @@ public class HTTPLoadTestBaselineStatistics {
         List<Path> csvFiles = Files.list(resultsPath).filter(path -> csvFilePattern.matcher(path.getFileName().toString().toLowerCase()).matches()).collect(Collectors.toList());
 
         for (Path csvFile : csvFiles) {
-            int failed = 0;
             int deviations = 0;
             int undeterminedReadWrite = 0;
             Matcher csvFilenameMatcher = csvFilePattern.matcher(csvFile.getFileName().toString().toLowerCase());
@@ -64,23 +63,36 @@ public class HTTPLoadTestBaselineStatistics {
                     ObjectNode node = mapper.readTree(jParser);
                     double duration = node.get("test_duration").asDouble();
                     boolean success = node.get("test_success").asBoolean();
-                    if (!success) {
-                        failed++;
-                        continue;
-                    }
                     boolean deviation = node.get("test_deviation_flag").asBoolean();
-                    if (deviation) {
-                        deviations++;
-                        continue;
-                    }
+                    int workerConcurrencyDegree = node.get("worker_concurrency_degree").asInt();
+                    statistics.recordWorkerConcurrency(workerConcurrencyDegree);
+                    int commandConcurrencyDegree = node.get("command_concurrency_degree").asInt();
+                    statistics.recordCommandConcurrency(commandConcurrencyDegree);
+
                     String tags = node.get("test_tags").asText();
                     Matcher readMatcher = readPattern.matcher(tags);
                     if (readMatcher.find()) {
-                        statistics.recordReadLatency(duration);
+                        if (success) {
+                            statistics.recordReadLatency(duration);
+                        } else {
+                            statistics.recordReadFailedLatency(duration);
+                        }
+                        if (deviation) {
+                            // NOTE: Deviation counts are reported and then discarded
+                            deviations++;
+                        }
                     } else {
                         Matcher writeMatcher = writePattern.matcher(tags);
                         if (writeMatcher.find()) {
-                            statistics.recordWriteLatency(duration);
+                            if (success) {
+                                statistics.recordWriteLatency(duration);
+                            } else {
+                                statistics.recordWriteFailedLatency(duration);
+                            }
+                            if (deviation) {
+                                // NOTE: Deviation counts are reported and then discarded
+                                deviations++;
+                            }
                         } else {
                             undeterminedReadWrite++;
                         }
@@ -88,9 +100,6 @@ public class HTTPLoadTestBaselineStatistics {
                 }
             }
 
-            if (failed > 0) {
-                System.err.println(testBasename + " Number of failed tests: " + failed);
-            }
             if (deviations > 0) {
                 System.err.println(testBasename + " Number of deviations: " + deviations);
             }
