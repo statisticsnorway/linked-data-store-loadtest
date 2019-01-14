@@ -24,7 +24,7 @@ check_whether_lds_network_and_containers_exists() {
   fi
 }
 
-stop_test_containers() {
+stop_ldsloadtestcontroller() {
   if [ "$(docker ps -q -f 'name=ldsloadtestcontroller')" != "" ]; then
     echo Stopping test-controller container
     docker stop $(docker ps -q -f 'name=ldsloadtestcontroller')
@@ -33,22 +33,47 @@ stop_test_containers() {
     echo Removing stopped test-controller container
     docker rm $(docker ps -aq -f 'name=ldsloadtestcontroller')
   fi
+}
 
-  if [ "$(docker ps -q -f 'ancestor=cantara/httploadtest-baseline' -f 'name=loadtest')" != "" ]; then
+stop_httploadtest() {
+  if [ "$(docker ps -q -f 'name=httploadtestbaseline')" != "" ]; then
     echo Stopping httploadtest-baseline container
-    docker stop $(docker ps -q -f 'ancestor=cantara/httploadtest-baseline' -f 'name=loadtest')
+    docker stop $(docker ps -q -f 'name=httploadtestbaseline')
   fi
-  if [ "$(docker ps -aq -f 'ancestor=cantara/httploadtest-baseline' -f 'name=loadtest')" != "" ]; then
+  if [ "$(docker ps -aq -f 'name=httploadtestbaseline')" != "" ]; then
     echo Removing exited httploadtest-baseline container
-    docker rm $(docker ps -aq -f 'ancestor=cantara/httploadtest-baseline' -f 'name=loadtest')
+    docker rm $(docker ps -aq -f 'name=httploadtestbaseline')
   fi
 }
 
-start_test_containers() {
+start_ldsloadtestcontroller() {
   echo Starting test-controller container
   docker run --network ldsloadtest -t -d -v $(pwd)/setup:/loadtest -v $(pwd)/${OUTPUTFOLDER}/results:/results -w /loadtest --name ldsloadtestcontroller ldstestctrl sh
+}
+
+start_httploadtest() {
   echo Starting httploadtest-baseline container
-  docker run --network ldsloadtest --name 'loadtest' -d -p 28086:8086 -v $(pwd)/${OUTPUTFOLDER}/results:/home/HTTPLoadTest-baseline/results cantara/httploadtest-baseline
+  docker run --network ldsloadtest --name 'httploadtestbaseline' -d -p 28086:8086 -v $(pwd)/${OUTPUTFOLDER}/results:/home/HTTPLoadTest-baseline/results cantara/httploadtest-baseline
+}
+
+stop_test_containers() {
+  stop_ldsloadtestcontroller
+  stop_httploadtest
+}
+
+start_test_containers() {
+  start_ldsloadtestcontroller
+  start_httploadtest
+}
+
+restart_ldsloadtestcontroller() {
+  stop_ldsloadtestcontroller
+  start_ldsloadtestcontroller
+}
+
+restart_http_loadtest_baseline() {
+  stop_httploadtest
+  start_httploadtest
 }
 
 check_health_of_lds() {
@@ -66,7 +91,7 @@ prepopulate_data() {
 
 check_health_of_loadtest() {
   echo Checking health of httploadtest-baseline container
-  if [ $(docker exec -it ldsloadtestcontroller curl -s -o /dev/null --write-out "%{http_code}" http://loadtest:8086/HTTPLoadTest-baseline/health) -ne 200 ]; then
+  if [ $(docker exec -it ldsloadtestcontroller curl -s -o /dev/null --write-out "%{http_code}" http://httploadtestbaseline:8086/HTTPLoadTest-baseline/health) -ne 200 ]; then
     echo ERROR: HTTPLoadTest-baseline is not responding correctly.
     exit 1
   fi
@@ -75,17 +100,17 @@ check_health_of_loadtest() {
 configure_loadtest() {
   echo Configuring loadtest ...
   echo Uploading zip-file with templates
-  if [ $(docker exec -it ldsloadtestcontroller sh -c 'zip -qr gsim.zip gsim && curl -s -o /dev/null --write-out "%{http_code}" -F "file=@gsim.zip" http://loadtest:8086/HTTPLoadTest-baseline/loadTest/zip') -ne 200 ]; then echo ERROR: Unable to upload zip-file; exit 1; fi
+  if [ $(docker exec -it ldsloadtestcontroller sh -c 'zip -qr gsim.zip gsim && curl -s -o /dev/null --write-out "%{http_code}" -F "file=@gsim.zip" http://httploadtestbaseline:8086/HTTPLoadTest-baseline/loadTest/zip') -ne 200 ]; then echo ERROR: Unable to upload zip-file; exit 1; fi
   echo Uploading read-specification
-  if [ $(docker exec -it ldsloadtestcontroller curl -s -o /dev/null --write-out "%{http_code}" --data-urlencode 'jsonConfig@/loadtest/gsim/read.json' http://loadtest:8086/HTTPLoadTest-baseline/loadTest/form/read) -ne 200 ]; then echo ERROR: Unable to upload read-specification; exit 1; fi
+  if [ $(docker exec -it ldsloadtestcontroller curl -s -o /dev/null --write-out "%{http_code}" --data-urlencode 'jsonConfig@/loadtest/gsim/read.json' http://httploadtestbaseline:8086/HTTPLoadTest-baseline/loadTest/form/read) -ne 200 ]; then echo ERROR: Unable to upload read-specification; exit 1; fi
   echo Uploading write-specification
-  if [ $(docker exec -it ldsloadtestcontroller curl -s -o /dev/null --write-out "%{http_code}" --data-urlencode 'jsonConfig@/loadtest/gsim/write.json' http://loadtest:8086/HTTPLoadTest-baseline/loadTest/form/write) -ne 200 ]; then echo ERROR: Unable to upload write-specification; exit 1; fi
+  if [ $(docker exec -it ldsloadtestcontroller curl -s -o /dev/null --write-out "%{http_code}" --data-urlencode 'jsonConfig@/loadtest/gsim/write.json' http://httploadtestbaseline:8086/HTTPLoadTest-baseline/loadTest/form/write) -ne 200 ]; then echo ERROR: Unable to upload write-specification; exit 1; fi
   echo Uploading benchmark-configuration
-  if [ $(docker exec -it ldsloadtestcontroller curl -s -o /dev/null --write-out "%{http_code}" --data-urlencode 'jsonConfig@/loadtest/gsim/benchmark.json' http://loadtest:8086/HTTPLoadTest-baseline/loadTest/form/benchmark) -ne 200 ]; then echo ERROR: Unable to upload benchmark-configuration; exit 1; fi
+  if [ $(docker exec -it ldsloadtestcontroller curl -s -o /dev/null --write-out "%{http_code}" --data-urlencode 'jsonConfig@/loadtest/gsim/benchmark.json' http://httploadtestbaseline:8086/HTTPLoadTest-baseline/loadTest/form/benchmark) -ne 200 ]; then echo ERROR: Unable to upload benchmark-configuration; exit 1; fi
 }
 
 run_loadtest() {
-  if [ $(docker exec -it ldsloadtestcontroller bash -c 'jq ".test_no_of_threads='$1' | .test_sleep_in_ms=0 | .test_read_write_ratio=80 | .test_duration_in_seconds='$2' | .test_randomize_sleeptime=false" /loadtest/gsim/config.json | curl -s -o /dev/null --write-out "%{http_code}" -H "Content-Type: application/json" -d "@-" http://loadtest:8086/HTTPLoadTest-baseline/loadTest') -ne 200 ]; then
+  if [ $(docker exec -it ldsloadtestcontroller bash -c 'jq ".test_no_of_threads='$1' | .test_sleep_in_ms=0 | .test_read_write_ratio=80 | .test_duration_in_seconds='$2' | .test_randomize_sleeptime=false" /loadtest/gsim/config.json | curl -s -o /dev/null --write-out "%{http_code}" -H "Content-Type: application/json" -d "@-" http://httploadtestbaseline:8086/HTTPLoadTest-baseline/loadTest') -ne 200 ]; then
     echo "ERROR: Unable to trigger loadtest with $1 threads"
     exit 1
   fi
