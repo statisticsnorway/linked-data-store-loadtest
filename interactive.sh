@@ -2,12 +2,12 @@
 
 . $(dirname "$0")/functions.sh
 
-OUTPUTFOLDER="interactive"
+OUTPUTFOLDER="out"
 
 case "$1" in
 
   "help")
-    echo Commands: help, init, prepopulate, warmup, run, stop, plot
+    echo Commands: help, init, restart_httploadtest, configure, prepopulate, warmup, run, stop, plot
     ;;
 
   "init")
@@ -18,6 +18,14 @@ case "$1" in
     sleep 5
     check_health_of_lds
     check_health_of_loadtest
+    configure_loadtest
+    ;;
+
+  "restart_httploadtest")
+    restart_http_loadtest_baseline
+    ;;
+
+  "configure")
     configure_loadtest
     ;;
 

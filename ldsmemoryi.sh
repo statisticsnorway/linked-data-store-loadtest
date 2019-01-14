@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 echo Creating folders
-mkdir -p interactive/conf
-mkdir -p interactive/results
-echo Removing previous test-output
-rm -rf interactive/results/*
+mkdir -p out/conf
+mkdir -p out/results
+#echo Removing previous test-output
+#rm -rf out/results/*
 
 ENV_FILE='ldsmemory-compose.env'
 if [ -f $ENV_FILE ]; then
