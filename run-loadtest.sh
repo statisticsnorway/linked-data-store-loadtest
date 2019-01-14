@@ -9,10 +9,10 @@
 
 run_loadtest_all() {
   echo "Running loadtests with threads ranging from 1 to 50"
-  for i in {1..10}; do run_loadtest $i 20; done
-  for ((i=12;i<=20;i=i+2)) do run_loadtest $i 20; done
-  for ((i=25;i<=50;i=i+5)) do run_loadtest $i 20; done
-  sleep 3
+  for i in {1..10}; do run_loadtest $i 10; done
+  for ((i=12;i<=20;i=i+2)) do run_loadtest $i 10; done
+  for ((i=25;i<=50;i=i+5)) do run_loadtest $i 10; done
+  sleep 5
 }
 
 
@@ -30,7 +30,7 @@ check_health_of_lds
 prepopulate_data
 check_health_of_loadtest
 configure_loadtest
-warm_up_lds 10 60
+warm_up_lds 10 30
 run_loadtest_all
 create_gnuplot_files
 stop_test_containers

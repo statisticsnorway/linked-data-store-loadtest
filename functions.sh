@@ -123,7 +123,7 @@ run_loadtest() {
 warm_up_lds() {
   echo "Warming up . . ."
   run_loadtest $1 $2
-  sleep 5
+  sleep 10
   mkdir -p ${OUTPUTFOLDER}/results/warmup
   mv ${OUTPUTFOLDER}/results/*.csv ${OUTPUTFOLDER}/results/*.json ${OUTPUTFOLDER}/results/warmup
 }
