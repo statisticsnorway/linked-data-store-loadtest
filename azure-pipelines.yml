@@ -6,12 +6,13 @@ parameters:
 
 # Pipeline triggers on any branch and tag
 trigger:
-  branches:
-    include:
-      - '*'
-  tags:
-    include:
-      - '*'
+#   TODO: Commented out to not trigger pipeline, uncomment when continuing work later
+#  branches:
+#    include:
+#      - '*'
+#  tags:
+#    include:
+#      - '*'
 
 resources:
   containers:
@@ -36,6 +37,7 @@ variables:
   # Azure Pipelines
   - group:  Hemmeligheter
 
+  # TODO: Check that all the paths are correct for the project
   # Variables defined here
   - name:     fullSha
       value:  '$(Build.SourceVersion)'
