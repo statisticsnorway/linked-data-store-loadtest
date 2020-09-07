@@ -37,10 +37,18 @@ variables:
   - group:  Hemmeligheter
 
   # Variables defined here
-  - name:   MAVEN_CACHE_FOLDER
-    value:  $(Pipeline.Workspace)/.m2/repository
-  - name:   MAVEN_OPTS
-    value:  '-Dmaven.repo.local=$(MAVEN_CACHE_FOLDER)'
+  - name:     fullSha
+      value:  '$(Build.SourceVersion)'
+  - name:     imageHost
+      value:  'https://eu.gcr.io/'
+  - name:     imageName
+      value:  'eu.gcr.io/prod-bip/ssb/lds/linked-data-store-loadtest'
+  - name:     repoName
+      value:  'prod-bip/ssb/lds/linked-data-store-loadtest'
+  - name:     MAVEN_CACHE_FOLDER
+      value:  $(Pipeline.Workspace)/.m2/repository
+  - name:     MAVEN_OPTS
+      value:  '-Dmaven.repo.local=$(MAVEN_CACHE_FOLDER)'
 
 # Job which will run mvn build, mvn install and Sonar Analysis (if branch is master)
 jobs:
@@ -51,7 +59,12 @@ jobs:
     # Job condition: Run these jobs on any branch, but not on tags
     condition:  not(startsWith(variables['Build.SourceBranch'], 'refs/tags'))
 
-    # Steps in this Job
-    steps:
-      - template: complete-builds/job-test-coverage-build-gcr.yml@templates
-
+    # Job which runs mvn test and verify, Sonar Analysis (if branch is master), mvn install,
+    # builds Docker image, pushes this to GCR and checks for any image vulnerabilities
+    - template: complete-builds/job-test-coverage-build-gcr.yml@templates
+      parameters:
+        project:        lds
+        imageName:      $(imageName)
+        repoName:       $(repoName)
+        artifactName:   linked-data-store-loadtest
+        mavenContainer: {{ mavenContainer }}
